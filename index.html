@@ -1,1 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>StudyPack KCSE — Offline High School Revision</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo-box">SP</div>
+      <div>
+        <h1>StudyPack KCSE</h1>
+        <p class="subtitle">Offline-First Kenya High School Revision (Form 1–4)</p>
+      </div>
+    </div>
+
+    <div class="controls">
+      <div class="net-toggle-wrap">
+        <span id="status-dot" class="dot online"></span>
+        <span id="status-text" class="status-label">Online</span>
+        <button id="toggle-network-btn" class="btn-outline" title="Simulate losing or regaining internet">
+          Go Offline
+        </button>
+      </div>
+      <button id="sync-btn" class="btn-sync">
+        Sync Queue (<span id="queue-count">0</span>)
+      </button>
+    </div>
+  </header>
+
+  <main class="container">
+    <div id="toast-banner" class="toast hidden"></div>
+
+    <!-- CATALOG VIEW -->
+    <section id="catalog-view">
+      <div class="hero-strip">
+        <div>
+          <h2>KCSE Revision Pack Catalog</h2>
+          <p class="muted">Download lightweight subject packs (~12–18 KB) once, revise 100% offline, and auto-sync scores.</p>
+        </div>
+        <div class="hero-actions">
+          <button id="download-all-btn" class="btn-primary">Download All 12 Packs</button>
+          <button id="reset-demo-btn" class="btn-outline">Reset Storage</button>
+        </div>
+      </div>
+
+      <div class="filter-bar">
+        <div class="category-tabs" id="category-tabs">
+          <button class="cat-btn active" data-cat="All">All (12)</button>
+          <button class="cat-btn" data-cat="Compulsory">Compulsory</button>
+          <button class="cat-btn" data-cat="Sciences">Sciences</button>
+          <button class="cat-btn" data-cat="Humanities">Humanities</button>
+          <button class="cat-btn" data-cat="Technical">Technical & Applied</button>
+        </div>
+        <input id="search-input" type="search" placeholder="Search subject or topic (e.g. Osmosis, Algebra, River)..." />
+      </div>
+
+      <div id="pack-grid" class="grid"></div>
+
+      <!-- QUICK PACK CREATOR -->
+      <section class="panel creator-panel">
+        <h3>Teacher / Student Pack Creator</h3>
+        <p class="muted">Create a custom KCSE revision bundle and cache it immediately for offline study.</p>
+        <form id="creator-form" class="form-grid">
+          <div class="row-2">
+            <select id="c-subject" required>
+              <option value="Mathematics">Mathematics</option>
+              <option value="English">English</option>
+              <option value="Kiswahili">Kiswahili</option>
+              <option value="Biology">Biology</option>
+              <option value="Chemistry">Chemistry</option>
+              <option value="Physics">Physics</option>
+              <option value="Geography">Geography</option>
+              <option value="History & Government">History & Government</option>
+              <option value="CRE">CRE</option>
+              <option value="Agriculture">Agriculture</option>
+              <option value="Business Studies">Business Studies</option>
+              <option value="Computer Studies">Computer Studies</option>
+            </select>
+            <select id="c-category" required>
+              <option value="Compulsory">Compulsory</option>
+              <option value="Sciences">Sciences</option>
+              <option value="Humanities">Humanities</option>
+              <option value="Technical">Technical & Applied</option>
+            </select>
+          </div>
+          <input id="c-title" type="text" placeholder="Pack Title (e.g., Form 3: Organic Chemistry Intro)" required />
+          <input id="c-note-head" type="text" placeholder="Key Note Heading" required />
+          <textarea id="c-note-body" rows="2" placeholder="Concise KCSE revision summary..." required></textarea>
+          <div class="row-2">
+            <input id="c-fc-term" type="text" placeholder="Flashcard Term" required />
+            <input id="c-fc-def" type="text" placeholder="Flashcard Definition" required />
+          </div>
+          <input id="c-q" type="text" placeholder="KCSE Practice Question" required />
+          <div class="row-2">
+            <input id="c-opts" type="text" placeholder="4 Options separated by commas (A, B, C, D)" required />
+            <input id="c-ans" type="number" min="0" max="3" value="0" placeholder="Correct Index (0–3)" required />
+          </div>
+          <input id="c-exp" type="text" placeholder="Marking-scheme explanation" required />
+          <button type="submit" class="btn-primary">Create & Cache Offline Pack</button>
+        </form>
+      </section>
+
+      <!-- SYNC LOG -->
+      <section class="panel log-panel">
+        <div class="panel-header">
+          <h3>Sync Queue & Server Log</h3>
+          <span id="storage-summary" class="muted"></span>
+        </div>
+        <div id="sync-log-list" class="log-list">
+          <p class="muted">No quiz attempts recorded yet. Open a downloaded pack and complete a mini-quiz.</p>
+        </div>
+      </section>
+    </section>
+
+    <!-- STUDY VIEW -->
+    <section id="study-view" class="hidden">
+      <div class="study-header">
+        <button id="back-btn" class="btn-outline">← Back to Catalog</button>
+        <div>
+          <span id="study-badge" class="pill"></span>
+          <h2 id="study-title"></h2>
+        </div>
+      </div>
+
+      <div class="study-tabs">
+        <button class="stab active" data-tab="notes">1. Revision Notes</button>
+        <button class="stab" data-tab="flashcards">2. Flashcards</button>
+        <button class="stab" data-tab="quiz">3. KCSE Mini-Quiz</button>
+      </div>
+
+      <div id="panel-notes" class="stab-panel"></div>
+      <div id="panel-flashcards" class="stab-panel hidden"></div>
+      <div id="panel-quiz" class="stab-panel hidden"></div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
+
 
