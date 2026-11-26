@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>StudyPack KCSE — Offline High School Revision</title>
+  <title>StudyPack Kenya — Offline KCSE & CBC Revision</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -11,8 +11,8 @@
     <div class="brand">
       <div class="logo-box">SP</div>
       <div>
-        <h1>StudyPack KCSE</h1>
-        <p class="subtitle">Offline-First Kenya High School Revision (Form 1–4)</p>
+        <h1>StudyPack Kenya</h1>
+        <p class="subtitle">Offline-First KCSE (8-4-4) & CBC Senior School Revision</p>
       </div>
     </div>
 
@@ -37,68 +37,127 @@
     <section id="catalog-view">
       <div class="hero-strip">
         <div>
-          <h2>KCSE Revision Pack Catalog</h2>
-          <p class="muted">Download lightweight subject packs (~12–18 KB) once, revise 100% offline, and auto-sync scores.</p>
+          <h2>KCSE & CBC Revision Pack Catalog</h2>
+          <p class="muted">Download compact study bundles once, import revision papers, revise 100% offline, and auto-sync scores.</p>
         </div>
         <div class="hero-actions">
-          <button id="download-all-btn" class="btn-primary">Download All 12 Packs</button>
+          <button id="download-all-btn" class="btn-primary">Download All Packs</button>
           <button id="reset-demo-btn" class="btn-outline">Reset Storage</button>
         </div>
       </div>
 
+      <!-- CURRICULUM & REVISION TIPS BANNER -->
+      <section class="panel tips-hub">
+        <div class="tips-header">
+          <div>
+            <h3>Kenya Exam & Competency Revision Playbook</h3>
+            <p class="muted">Switch curriculum mode to filter packs and view tailored KCSE & CBC revision strategies.</p>
+          </div>
+          <div class="curr-switch" id="curr-tabs">
+            <button class="curr-btn active" data-curr="All">All Curricula</button>
+            <button class="curr-btn" data-curr="KCSE">KCSE (8-4-4)</button>
+            <button class="curr-btn" data-curr="CBC">CBC (Junior & Senior)</button>
+          </div>
+        </div>
+        <div id="curriculum-tips-grid" class="tips-grid"></div>
+      </section>
+
       <div class="filter-bar">
         <div class="category-tabs" id="category-tabs">
-          <button class="cat-btn active" data-cat="All">All (12)</button>
-          <button class="cat-btn" data-cat="Compulsory">Compulsory</button>
-          <button class="cat-btn" data-cat="Sciences">Sciences</button>
-          <button class="cat-btn" data-cat="Humanities">Humanities</button>
+          <button class="cat-btn active" data-cat="All">All Areas</button>
+          <button class="cat-btn" data-cat="Compulsory">Compulsory / Core</button>
+          <button class="cat-btn" data-cat="Sciences">Sciences & STEM</button>
+          <button class="cat-btn" data-cat="Humanities">Humanities & Social</button>
           <button class="cat-btn" data-cat="Technical">Technical & Applied</button>
         </div>
-        <input id="search-input" type="search" placeholder="Search subject or topic (e.g. Osmosis, Algebra, River)..." />
+        <input id="search-input" type="search" placeholder="Search subject, strand, or topic (e.g. Osmosis, Algebra, Portfolio)..." />
       </div>
 
       <div id="pack-grid" class="grid"></div>
 
+      <!-- IMPORT REVISION PAPERS PANEL -->
+      <section class="panel import-panel">
+        <div class="panel-header">
+          <div>
+            <h3>Import Revision Papers (JSON, TXT, or PDF)</h3>
+            <p class="muted">Load past papers, mock exams, or marking guides into your offline catalog.</p>
+          </div>
+          <button id="download-sample-json-btn" type="button" class="btn-outline">Download Sample .JSON</button>
+        </div>
+
+        <form id="import-paper-form" class="form-grid">
+          <div class="row-3">
+            <select id="imp-curriculum" required>
+              <option value="KCSE">KCSE (8-4-4)</option>
+              <option value="CBC">CBC (Junior / Senior School)</option>
+            </select>
+            <input id="imp-subject" type="text" placeholder="Subject (e.g., Chemistry PP1 or Integrated Science)" required />
+            <select id="imp-category" required>
+              <option value="Compulsory">Compulsory / Core</option>
+              <option value="Sciences">Sciences & STEM</option>
+              <option value="Humanities">Humanities & Social</option>
+              <option value="Technical">Technical & Applied</option>
+            </select>
+          </div>
+
+          <div class="row-2">
+            <input id="imp-title" type="text" placeholder="Paper Title (e.g., 2025 Mock Paper 1 — Organic & Mole Revision)" required />
+            <input id="imp-file" type="file" accept=".json,.txt,.pdf,application/json,text/plain,application/pdf" required />
+          </div>
+
+          <input id="imp-tip" type="text" placeholder="Optional Revision Tip for this paper (e.g., Check units and significant figures)" />
+          <button type="submit" class="btn-primary">Import & Cache Revision Paper</button>
+        </form>
+      </section>
+
       <!-- QUICK PACK CREATOR -->
       <section class="panel creator-panel">
-        <h3>Teacher / Student Pack Creator</h3>
-        <p class="muted">Create a custom KCSE revision bundle and cache it immediately for offline study.</p>
+        <h3>Teacher / Student Pack Creator (KCSE & CBC)</h3>
+        <p class="muted">Bundle notes, revision tips, flashcards, and assessment questions into an offline pack.</p>
         <form id="creator-form" class="form-grid">
-          <div class="row-2">
+          <div class="row-3">
+            <select id="c-curriculum" required>
+              <option value="KCSE">KCSE (8-4-4)</option>
+              <option value="CBC">CBC (Junior / Senior School)</option>
+            </select>
             <select id="c-subject" required>
-              <option value="Mathematics">Mathematics</option>
+              <option value="Mathematics">Mathematics / Core Maths</option>
               <option value="English">English</option>
               <option value="Kiswahili">Kiswahili</option>
               <option value="Biology">Biology</option>
               <option value="Chemistry">Chemistry</option>
               <option value="Physics">Physics</option>
+              <option value="Integrated Science">Integrated Science (CBC)</option>
               <option value="Geography">Geography</option>
               <option value="History & Government">History & Government</option>
+              <option value="Social Studies">Social Studies (CBC)</option>
               <option value="CRE">CRE</option>
               <option value="Agriculture">Agriculture</option>
               <option value="Business Studies">Business Studies</option>
-              <option value="Computer Studies">Computer Studies</option>
+              <option value="Computer Studies">Computer Studies / Digital Literacy</option>
+              <option value="Pre-Technical Studies">Pre-Technical Studies (CBC)</option>
             </select>
             <select id="c-category" required>
-              <option value="Compulsory">Compulsory</option>
-              <option value="Sciences">Sciences</option>
-              <option value="Humanities">Humanities</option>
+              <option value="Compulsory">Compulsory / Core</option>
+              <option value="Sciences">Sciences & STEM</option>
+              <option value="Humanities">Humanities & Social</option>
               <option value="Technical">Technical & Applied</option>
             </select>
           </div>
-          <input id="c-title" type="text" placeholder="Pack Title (e.g., Form 3: Organic Chemistry Intro)" required />
-          <input id="c-note-head" type="text" placeholder="Key Note Heading" required />
-          <textarea id="c-note-body" rows="2" placeholder="Concise KCSE revision summary..." required></textarea>
+          <input id="c-title" type="text" placeholder="Pack Title (e.g., Strand 2: Mixtures, Elements & Compounds)" required />
+          <input id="c-tip" type="text" placeholder="Exam / Competency Revision Tip (e.g., Always show working steps for method marks)" required />
+          <input id="c-note-head" type="text" placeholder="Key Note / Sub-Strand Heading" required />
+          <textarea id="c-note-body" rows="2" placeholder="Concise revision summary..." required></textarea>
           <div class="row-2">
-            <input id="c-fc-term" type="text" placeholder="Flashcard Term" required />
+            <input id="c-fc-term" type="text" placeholder="Flashcard Term / Concept" required />
             <input id="c-fc-def" type="text" placeholder="Flashcard Definition" required />
           </div>
-          <input id="c-q" type="text" placeholder="KCSE Practice Question" required />
+          <input id="c-q" type="text" placeholder="Practice / Assessment Question" required />
           <div class="row-2">
             <input id="c-opts" type="text" placeholder="4 Options separated by commas (A, B, C, D)" required />
             <input id="c-ans" type="number" min="0" max="3" value="0" placeholder="Correct Index (0–3)" required />
           </div>
-          <input id="c-exp" type="text" placeholder="Marking-scheme explanation" required />
+          <input id="c-exp" type="text" placeholder="Marking-scheme / rubric explanation" required />
           <button type="submit" class="btn-primary">Create & Cache Offline Pack</button>
         </form>
       </section>
@@ -126,9 +185,9 @@
       </div>
 
       <div class="study-tabs">
-        <button class="stab active" data-tab="notes">1. Revision Notes</button>
+        <button class="stab active" data-tab="notes">1. Notes & Revision Tips</button>
         <button class="stab" data-tab="flashcards">2. Flashcards</button>
-        <button class="stab" data-tab="quiz">3. KCSE Mini-Quiz</button>
+        <button class="stab" data-tab="quiz">3. Assessment Quiz</button>
       </div>
 
       <div id="panel-notes" class="stab-panel"></div>
@@ -140,5 +199,3 @@
   <script src="app.js"></script>
 </body>
 </html>
-
-
