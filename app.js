@@ -1,19 +1,54 @@
 const API_BASE = "http://127.0.0.1:8000/api";
-const KEY_DOWNLOADED = "kcse_studypack_downloaded_v1";
-const KEY_CUSTOM = "kcse_studypack_custom_v1";
-const KEY_QUEUE = "kcse_studypack_queue_v1";
-const KEY_SERVER_LOG = "kcse_studypack_server_log_v1";
+const KEY_DOWNLOADED = "kenya_studypack_downloaded_v3";
+const KEY_CUSTOM = "kenya_studypack_custom_v3";
+const KEY_QUEUE = "kenya_studypack_queue_v3";
+const KEY_SERVER_LOG = "kenya_studypack_server_log_v3";
 
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("./sw.js").catch(() => {});
 }
 
-const DEFAULT_KCSE_PACKS = [
+const CURRICULUM_REVISION_TIPS = [
+  {
+    curriculum: "KCSE",
+    title: "KCSE Command Words & Marking Schemes",
+    body: "Match answers to KNEC command verbs: 'State/Name' needs a brief fact; 'Explain' requires a point plus mechanism/reason; 'Compare' must address both items in the same sentence."
+  },
+  {
+    curriculum: "KCSE",
+    title: "Show Method Marks (M1) Before Final Answer (A1)",
+    body: "In Mathematics, Physics, and Chemistry calculations, write the formula and substitution clearly. Even if a final rounding error occurs, method marks still count."
+  },
+  {
+    curriculum: "KCSE",
+    title: "Timed Past-Paper Drills (80/20 Rule)",
+    body: "Revise Form 3 & 4 high-weight topics under strict exam timing (e.g., 2.5 hrs for Paper 1/2), then review KNEC examiner reports for common candidate pitfalls."
+  },
+  {
+    curriculum: "CBC",
+    title: "CBC Application & Real-Life Scenarios",
+    body: "Competency-based assessments test how you apply concepts to community, environmental, and everyday problem-solving scenarios—always connect theory to practical action."
+  },
+  {
+    curriculum: "CBC",
+    title: "Projects, Portfolios & Rubrics (CBA)",
+    body: "Document every step of practical investigations—planning, improvised local materials, observations, and reflection—to hit 'Exceeding Expectations' on KNEC CBA rubrics."
+  },
+  {
+    curriculum: "CBC",
+    title: "Core Competencies & Senior School Pathways",
+    body: "Link revision across strands: integrate Digital Literacy, Critical Thinking, and Financial/Environmental awareness across STEM, Social Sciences, and Arts & Sports pathways."
+  }
+];
+
+const DEFAULT_STUDY_PACKS = [
   {
     pack_id: "math-kcse",
+    curriculum: "KCSE",
     subject: "Mathematics",
     category: "Compulsory",
     title: "Quadratic Equations, Surds & Commercial Arithmetic",
+    revision_tip: "KCSE Tip: Always leave surd answers in simplest rationalized form unless the question specifies decimal places or significant figures.",
     size_kb: 16,
     notes: [
       {
@@ -41,25 +76,21 @@ const DEFAULT_KCSE_PACKS = [
         options: ["KSh 24,000", "KSh 24,200", "KSh 22,000", "KSh 24,400"],
         answer_index: 1,
         explanation: "A = 20,000 × (1.10)² = 20,000 × 1.21 = KSh 24,200."
-      },
-      {
-        question: "Simplify: √48 + √27",
-        options: ["√75", "7√3", "12√3", "5√3"],
-        answer_index: 1,
-        explanation: "√48 = 4√3 and √27 = 3√3; 4√3 + 3√3 = 7√3."
       }
     ]
   },
   {
     pack_id: "eng-kcse",
+    curriculum: "KCSE",
     subject: "English",
     category: "Compulsory",
     title: "Functional Writing, Grammar & Cloze Test Mastery",
+    revision_tip: "KCSE Tip: In Paper 1 Functional Writing, format carries up to 8 marks—check addresses, dates, headings, and sign-off before drafting content.",
     size_kb: 14,
     notes: [
       {
         heading: "Functional Writing Formats (Paper 1)",
-        body: "Always include exact layout markers: Formal letters require sender address, date, recipient address, salutation, reference (RE:), body, and valediction (Yours faithfully)."
+        body: "Formal letters require sender address, date, recipient address, salutation, reference (RE:), body, and valediction (Yours faithfully)."
       },
       {
         heading: "Conditional Clauses & Inversion",
@@ -82,25 +113,16 @@ const DEFAULT_KCSE_PACKS = [
         options: ["Yours sincerely,", "Yours affectionately,", "Yours faithfully,", "Warm regards,"],
         answer_index: 2,
         explanation: "When the recipient's name is unknown ('Dear Sir/Madam'), end with 'Yours faithfully,'."
-      },
-      {
-        question: "Identify the sentence with correct subject-verb agreement:",
-        options: [
-          "Neither the prefects nor the captain were present.",
-          "Neither the prefects nor the captain was present.",
-          "Each of the candidates have a geometrical set.",
-          "The news are broadcast at 9 PM."
-        ],
-        answer_index: 1,
-        explanation: "With 'neither...nor', the verb agrees with the nearer subject ('captain' -> singular 'was')."
       }
     ]
   },
   {
     pack_id: "kisw-kcse",
+    curriculum: "KCSE",
     subject: "Kiswahili",
     category: "Compulsory",
     title: "Sarufi, Ngeli, Isimujamii na Fasihi Simulizi",
+    revision_tip: "KCSE Tip: Katika Isimujamii, taja sifa ya sajili kisha utoe mfano halisi wa sentensi au msamiati kutoka kifungu ulichopewa.",
     size_kb: 15,
     notes: [
       {
@@ -129,17 +151,6 @@ const DEFAULT_KCSE_PACKS = [
         explanation: "'Ukuta' iko katika ngeli ya U-ZI; wingi wake ni 'kuta ndefu zimebomoka'."
       },
       {
-        question: "Ni ipi sifa mojawapo ya sajili ya hospitalini?",
-        options: [
-          "Matumizi ya misimu ya mitaani pekee",
-          "Lugha yenye huruma, maswali ya uchunguzi na istilahi za kitabibu",
-          "Kukosekana kwa nidhamu kati ya mzungumzaji na msikilizaji",
-          "Matumizi ya nyimbo za kisiasa"
-        ],
-        answer_index: 1,
-        explanation: "Sajili ya hospitalini hutumia lugha ya upole, maswali ya utambuzi na msamiati wa kiafya."
-      },
-      {
         question: "Hadithi zinazoeleza asili ya vitu, tabia au matukio katika jamii huitwa:",
         options: ["Hurafa", "Visasili", "Hekaya", "Ngano za mazimwi"],
         answer_index: 1,
@@ -149,9 +160,11 @@ const DEFAULT_KCSE_PACKS = [
   },
   {
     pack_id: "bio-kcse",
+    curriculum: "KCSE",
     subject: "Biology",
     category: "Sciences",
     title: "Cell Physiology, Respiration & Ecology",
+    revision_tip: "KCSE Tip: Use exact biological terms (e.g., 'osmosis' not 'movement of water'; 'haemolysis' for red blood cells vs. 'turgid' for plant cells).",
     size_kb: 16,
     notes: [
       {
@@ -179,20 +192,16 @@ const DEFAULT_KCSE_PACKS = [
         options: ["Ribosome", "Mitochondrion", "Golgi apparatus", "Chloroplast"],
         answer_index: 1,
         explanation: "Mitochondria contain respiratory enzymes for the Krebs cycle and ATP synthesis."
-      },
-      {
-        question: "In a food chain: Grass → Grasshopper → Lizard → Hawk, which organism occupies the third trophic level?",
-        options: ["Grass", "Grasshopper", "Lizard", "Hawk"],
-        answer_index: 2,
-        explanation: "Level 1: Grass (producer), Level 2: Grasshopper (primary consumer), Level 3: Lizard (secondary consumer)."
       }
     ]
   },
   {
     pack_id: "chem-kcse",
+    curriculum: "KCSE",
     subject: "Chemistry",
     category: "Sciences",
     title: "Mole Concept, Acids/Bases & Electrochemistry",
+    revision_tip: "KCSE Tip: Always balance chemical equations with state symbols—unbalanced equations lose marks in mole ratio and ionic equation questions.",
     size_kb: 17,
     notes: [
       {
@@ -220,20 +229,16 @@ const DEFAULT_KCSE_PACKS = [
         options: ["MgO", "SO₂", "Al₂O₃", "Na₂O"],
         answer_index: 2,
         explanation: "Aluminium oxide (Al₂O₃) reacts with both dilute acids and concentrated alkalis."
-      },
-      {
-        question: "During electrolysis of aqueous copper(II) sulphate using carbon electrodes, what is observed at the cathode?",
-        options: ["Evolution of oxygen gas", "Deposition of a brown solid", "Evolution of hydrogen gas", "Dissolution of the cathode"],
-        answer_index: 1,
-        explanation: "Cu²⁺ ions are preferentially discharged at the cathode, forming a brown copper metal deposit."
       }
     ]
   },
   {
     pack_id: "phys-kcse",
+    curriculum: "KCSE",
     subject: "Physics",
     category: "Sciences",
     title: "Current Electricity, Waves & Electromagnetic Induction",
+    revision_tip: "KCSE Tip: Convert all values to SI units (meters, kilograms, seconds, amperes, volts) before substituting into formulas, and include units on final answers.",
     size_kb: 16,
     notes: [
       {
@@ -257,12 +262,6 @@ const DEFAULT_KCSE_PACKS = [
         explanation: "Vs = Vp × (Ns / Np) = 240 × (50 / 1000) = 12 V."
       },
       {
-        question: "Two 6Ω resistors in parallel are connected in series with a 3Ω resistor. Find total resistance.",
-        options: ["6 Ω", "9 Ω", "12 Ω", "15 Ω"],
-        answer_index: 0,
-        explanation: "Parallel pair: (6×6)/(6+6) = 3Ω. Total in series: 3Ω + 3Ω = 6Ω."
-      },
-      {
         question: "A radioactive sample of 80 g has a half-life of 5 days. How much remains undecayed after 15 days?",
         options: ["40 g", "20 g", "10 g", "5 g"],
         answer_index: 2,
@@ -272,9 +271,11 @@ const DEFAULT_KCSE_PACKS = [
   },
   {
     pack_id: "geo-kcse",
+    curriculum: "KCSE",
     subject: "Geography",
     category: "Humanities",
     title: "External Land-Forming Processes, Climate & Mapwork",
+    revision_tip: "KCSE Tip: In Paper 2 Mapwork, always quote 6-figure grid references with Eastings before Northings, and back up economic activity claims with map evidence (e.g., 'tea factory', 'cattle dip').",
     size_kb: 15,
     notes: [
       {
@@ -302,25 +303,16 @@ const DEFAULT_KCSE_PACKS = [
         options: ["Isotherms", "Isobars", "Isohyets", "Contours"],
         answer_index: 1,
         explanation: "Isobars connect points of equal barometric (atmospheric) pressure."
-      },
-      {
-        question: "What causes land and sea breezes along the Kenyan coast?",
-        options: [
-          "Differential heating and cooling of land and sea",
-          "Earth's revolution around the sun",
-          "Plate tectonic movement",
-          "Ocean salinity variations"
-        ],
-        answer_index: 0,
-        explanation: "Land heats and cools faster than sea water, creating local pressure gradients day and night."
       }
     ]
   },
   {
     pack_id: "hist-kcse",
+    curriculum: "KCSE",
     subject: "History & Government",
     category: "Humanities",
     title: "Constitutional Development, Independence & Devolved Government",
+    revision_tip: "KCSE Tip: For 'Explain six...' essay questions (12 marks), write 6 distinct paragraphs—each stating the point clearly followed by an explanation or historical example.",
     size_kb: 16,
     notes: [
       {
@@ -344,12 +336,6 @@ const DEFAULT_KCSE_PACKS = [
         explanation: "Article 6 and the First Schedule of the 2010 Constitution establish 47 counties."
       },
       {
-        question: "Which conference finalized Kenya's Independence Constitution in 1963?",
-        options: ["Berlin Conference", "Third Lancaster House Conference", "Bomas Conference", "Limuru Conference"],
-        answer_index: 1,
-        explanation: "The Third Lancaster House Conference (1963) drafted the independence constitution."
-      },
-      {
         question: "Who chairs the County Executive Committee in Kenya?",
         options: ["County Speaker", "County Commissioner", "County Governor", "Senator"],
         answer_index: 2,
@@ -359,9 +345,11 @@ const DEFAULT_KCSE_PACKS = [
   },
   {
     pack_id: "cre-kcse",
+    curriculum: "KCSE",
     subject: "CRE",
     category: "Humanities",
     title: "Old Testament Prophets, Luke's Gospel & Christian Ethics",
+    revision_tip: "KCSE Tip: Link biblical teachings directly to modern Kenyan Christian life when answering application questions (e.g., integrity, family life, environmental care).",
     size_kb: 14,
     notes: [
       {
@@ -394,25 +382,16 @@ const DEFAULT_KCSE_PACKS = [
         ],
         answer_index: 1,
         explanation: "Jesus defined a neighbor as anyone in need regardless of ethnic or social barriers."
-      },
-      {
-        question: "In Traditional African Communities, elders promoted harmony mainly through:",
-        options: [
-          "Written statutory courts",
-          "Mediation, reconciliation, and shared oaths/covenants",
-          "Imprisonment in cells",
-          "Exile to foreign nations"
-        ],
-        answer_index: 1,
-        explanation: "African traditional justice focused on restoring communal peace through mediation and reconciliation."
       }
     ]
   },
   {
     pack_id: "agri-kcse",
+    curriculum: "KCSE",
     subject: "Agriculture",
     category: "Technical",
     title: "Soil Fertility, Crop Production & Livestock Health",
+    revision_tip: "KCSE Tip: Distinguish clearly between 'cultural', 'biological', and 'chemical' pest/weed control methods, and name specific parasites or diseases accurately.",
     size_kb: 15,
     notes: [
       {
@@ -441,12 +420,6 @@ const DEFAULT_KCSE_PACKS = [
         explanation: "Bacillus anthracis forms long-lived spores when exposed to air; carcasses must be burned or buried deeply."
       },
       {
-        question: "Which practice controls soil erosion on steep slopes by building ridges across the contour?",
-        options: ["Overgrazing", "Terracing", "Monocropping", "Burning vegetation"],
-        answer_index: 1,
-        explanation: "Terraces reduce slope length and runoff velocity, preventing sheet and gully erosion."
-      },
-      {
         question: "Which fertilizer is best suited for top-dressing maize?",
         options: ["Single Superphosphate (SSP)", "Calcium Ammonium Nitrate (CAN)", "Muriate of Potash", "Rock Phosphate"],
         answer_index: 1,
@@ -456,9 +429,11 @@ const DEFAULT_KCSE_PACKS = [
   },
   {
     pack_id: "bus-kcse",
+    curriculum: "KCSE",
     subject: "Business Studies",
     category: "Technical",
     title: "Ledger Accounts, Cash Books & Balance Sheet",
+    revision_tip: "KCSE Tip: In ledger and cash book questions, always write the date, details (contra/account name), and balance c/d & b/d accurately.",
     size_kb: 15,
     notes: [
       {
@@ -482,12 +457,6 @@ const DEFAULT_KCSE_PACKS = [
         explanation: "Total Assets = 450,000 + 150,000 = 600,000. Capital = Assets - Liabilities = 600,000 - 200,000 = KSh 400,000."
       },
       {
-        question: "Which document is issued by a seller to reduce the amount owed by a buyer due to returned goods?",
-        options: ["Debit Note", "Credit Note", "Invoice", "Delivery Note"],
-        answer_index: 1,
-        explanation: "A Credit Note reduces an overcharge or credits the buyer's account for damaged/returned goods."
-      },
-      {
         question: "Which principle of insurance prevents an insured person from profiting from a loss?",
         options: ["Utmost Good Faith", "Indemnity", "Proximate Cause", "Insurable Interest"],
         answer_index: 1,
@@ -497,9 +466,11 @@ const DEFAULT_KCSE_PACKS = [
   },
   {
     pack_id: "comp-kcse",
+    curriculum: "KCSE",
     subject: "Computer Studies",
     category: "Technical",
     title: "Data Representation, Networking & System Development",
+    revision_tip: "KCSE Tip: In Paper 2 (451/2) practicals, save your database, spreadsheet, or DTP files frequently inside your named folder and verify printouts/PDF exports.",
     size_kb: 16,
     notes: [
       {
@@ -527,25 +498,199 @@ const DEFAULT_KCSE_PACKS = [
         options: ["Foreign Key", "Primary Key", "Lookup Wizard", "Input Mask"],
         answer_index: 1,
         explanation: "A Primary Key enforces entity integrity by requiring unique, non-null values."
+      }
+    ]
+  },
+  {
+    pack_id: "cbc-int-sci",
+    curriculum: "CBC",
+    subject: "Integrated Science",
+    category: "Sciences",
+    title: "Strand: Mixtures, Elements, Compounds & Human Reproduction",
+    revision_tip: "CBC Tip: Expect scenario-based questions asking you to design a safe separation method using locally available apparatus and observe laboratory safety.",
+    size_kb: 15,
+    notes: [
+      {
+        heading: "Sub-Strand: Separation of Heterogeneous & Homogeneous Mixtures",
+        body: "Use filtration for insoluble solids in liquids, simple distillation for miscible liquids with wide boiling point differences, and paper chromatography for pigments/dyes."
       },
       {
-        question: "Which SDLC changeover strategy runs the old and new systems simultaneously before retiring the old system?",
-        options: ["Direct changeover", "Parallel changeover", "Phased changeover", "Pilot changeover"],
+        heading: "Sub-Strand: Acids, Bases & Indicators",
+        body: "Plant extracts (such as red cabbage or hibiscus petals) act as natural acid-base indicators, changing color across pH ranges."
+      }
+    ],
+    flashcards: [
+      { term: "Fractional Distillation", definition: "Separation of miscible liquids with close boiling points (e.g., ethanol 78°C and water 100°C) using a fractionating column." },
+      { term: "Competency-Based Assessment (CBA)", definition: "Evaluation focusing on practical skills, values, and application of knowledge rather than rote memorization." }
+    ],
+    quiz: [
+      {
+        question: "A learner in Nakuru wants to separate pure water from salty borehole water. Which method is most suitable?",
+        options: ["Filtration", "Simple distillation", "Decantation", "Using a magnet"],
         answer_index: 1,
-        explanation: "Parallel running compares outputs of both systems to minimize operational risk."
+        explanation: "Simple distillation evaporates water and condenses pure distillate while leaving dissolved salts behind."
+      },
+      {
+        question: "Which locally available material can be crushed to make a natural acid-base indicator?",
+        options: ["Dry sand", "Red hibiscus flower petals", "Table salt", "Charcoal powder"],
+        answer_index: 1,
+        explanation: "Red hibiscus petals contain anthocyanin pigments that change color in acidic and basic solutions."
+      }
+    ]
+  },
+  {
+    pack_id: "cbc-math",
+    curriculum: "CBC",
+    subject: "Mathematics",
+    category: "Compulsory",
+    title: "Strand: Numbers, Algebra, Measurements & Financial Literacy",
+    revision_tip: "CBC Tip: Financial Literacy questions test real budgeting, mobile money transaction costs, VAT/tax calculations, and profit/loss decisions in daily life.",
+    size_kb: 15,
+    notes: [
+      {
+        heading: "Sub-Strand: Financial Literacy & Budgeting",
+        body: "Compare unit prices, calculate percentage discounts, and account for transaction fees and Value Added Tax (16% VAT in Kenya) when planning a household or school project budget."
+      },
+      {
+        heading: "Sub-Strand: Linear Inequalities & Graphs",
+        body: "Represent real-world constraints (e.g., maximum budget or minimum capacity) on a number line or Cartesian plane."
+      }
+    ],
+    flashcards: [
+      { term: "Core Mathematics (CBC Senior School)", definition: "Compulsory foundational mathematics strand across all Senior School pathways focusing on quantitative reasoning and financial literacy." },
+      { term: "16% VAT", definition: "Value Added Tax applied to taxable goods and services; VAT-inclusive price = 1.16 × base price." }
+    ],
+    quiz: [
+      {
+        question: "A solar study lamp costs KSh 1,500 before 16% VAT. What is the final price inclusive of VAT?",
+        options: ["KSh 1,660", "KSh 1,740", "KSh 1,516", "KSh 1,800"],
+        answer_index: 1,
+        explanation: "16% of 1,500 = 240. Total price = 1,500 + 240 = KSh 1,740."
+      },
+      {
+        question: "A learner has KSh 500 to buy notebooks at KSh 60 each and needs at least KSh 80 for bus fare. What is the maximum number of notebooks she can buy?",
+        options: ["6 notebooks", "7 notebooks", "8 notebooks", "9 notebooks"],
+        answer_index: 1,
+        explanation: "Available for notebooks = 500 - 80 = KSh 420. 420 ÷ 60 = 7 notebooks."
+      }
+    ]
+  },
+  {
+    pack_id: "cbc-social",
+    curriculum: "CBC",
+    subject: "Social Studies",
+    category: "Humanities",
+    title: "Strand: Citizenship, Peace & Conflict Resolution & Community Service",
+    revision_tip: "CBC Tip: Community Service Learning (CSL) projects require identifying a genuine local need, collaborating with peers, executing an action plan, and reflecting on values gained.",
+    size_kb: 14,
+    notes: [
+      {
+        heading: "Sub-Strand: Non-Violent Conflict Resolution",
+        body: "Negotiation, mediation, arbitration, and dialogue promote peaceful coexistence in schools and communities without resorting to violence."
+      },
+      {
+        heading: "Sub-Strand: Community Service Learning (CSL)",
+        body: "Combines classroom learning with community action—such as tree planting, waste management, or peer literacy mentorship."
+      }
+    ],
+    flashcards: [
+      { term: "Mediation", definition: "A neutral third party helps two conflicting sides communicate and reach a voluntary agreement." },
+      { term: "Pertinent and Contemporary Issues (PCIs)", definition: "Cross-cutting real-world themes in CBC including climate change, health promotion, citizenship, and digital safety." }
+    ],
+    quiz: [
+      {
+        question: "What is the primary goal of Community Service Learning (CSL) in CBC?",
+        options: [
+          "Memorizing historical dates for exams",
+          "Applying classroom knowledge and values to solve real community needs",
+          "Competing individually for cash prizes",
+          "Replacing all practical science lessons"
+        ],
+        answer_index: 1,
+        explanation: "CSL integrates academic concepts with practical civic responsibility and reflection."
+      },
+      {
+        question: "When a school prefect helps two classmates resolve a disagreement without imposing a punishment, which method is being used?",
+        options: ["Litigation", "Mediation", "Sanctioning", "Arbitration"],
+        answer_index: 1,
+        explanation: "Mediation uses an impartial facilitator to help parties agree on a solution themselves."
+      }
+    ]
+  },
+  {
+    pack_id: "cbc-pretech",
+    curriculum: "CBC",
+    subject: "Pre-Technical Studies",
+    category: "Technical",
+    title: "Strand: Safety, Technical Drawing, Entrepreneurship & Digital Tools",
+    revision_tip: "CBC Tip: Keep a clean portfolio of freehand orthographic sketches, safety checklists, and simple business prototypes using recycled or low-cost local materials.",
+    size_kb: 15,
+    notes: [
+      {
+        heading: "Sub-Strand: Workshop & Digital Safety",
+        body: "Use appropriate Personal Protective Equipment (PPE), keep workbenches clear, and protect personal data online using strong passwords and two-factor authentication."
+      },
+      {
+        heading: "Sub-Strand: Entrepreneurship & Prototyping",
+        body: "Identify a local customer problem, build a low-cost minimum viable prototype, calculate production cost vs. selling price, and gather user feedback."
+      }
+    ],
+    flashcards: [
+      { term: "Orthographic Projection", definition: "2D technical drawing showing an object from Front, Plan (Top), and End elevations." },
+      { term: "STEM & Technical Pathway", definition: "Senior School pathway preparing learners for engineering, applied sciences, ICT, and vocational innovation." }
+    ],
+    quiz: [
+      {
+        question: "Which three views are standard in first-angle orthographic technical drawing?",
+        options: [
+          "Front elevation, Plan (top view), and End elevation",
+          "Isometric, Perspective, and Oblique views",
+          "Sketch, Blueprint, and Photograph",
+          "Inside, Outside, and Diagonal views"
+        ],
+        answer_index: 0,
+        explanation: "Orthographic drawings represent 3D objects accurately using Front, Plan, and End 2D views."
+      },
+      {
+        question: "Before launching a student micro-enterprise in school, what is the best first step?",
+        options: [
+          "Borrowing a large bank loan immediately",
+          "Conducting a simple market survey to identify what peers/community actually need",
+          "Printing expensive flyers before making a product",
+          "Copying a competitor's name"
+        ],
+        answer_index: 1,
+        explanation: "Market research validates real demand before committing scarce resources."
       }
     ]
   }
 ];
 
 let isOnline = true;
+let activeCurriculum = "All";
 let activeCategory = "All";
 let searchQuery = "";
 
 const getDownloaded = () => JSON.parse(localStorage.getItem(KEY_DOWNLOADED) || "{}");
-const saveDownloaded = (obj) => localStorage.setItem(KEY_DOWNLOADED, JSON.stringify(obj));
+const saveDownloaded = (obj) => {
+  try {
+    localStorage.setItem(KEY_DOWNLOADED, JSON.stringify(obj));
+    return true;
+  } catch (_) {
+    showToast("Storage limit reached! Try removing large files or resetting storage.");
+    return false;
+  }
+};
 const getCustomPacks = () => JSON.parse(localStorage.getItem(KEY_CUSTOM) || "[]");
-const saveCustomPacks = (arr) => localStorage.setItem(KEY_CUSTOM, JSON.stringify(arr));
+const saveCustomPacks = (arr) => {
+  try {
+    localStorage.setItem(KEY_CUSTOM, JSON.stringify(arr));
+    return true;
+  } catch (_) {
+    showToast("Storage limit reached while saving imported paper.");
+    return false;
+  }
+};
 const getQueue = () => JSON.parse(localStorage.getItem(KEY_QUEUE) || "[]");
 const saveQueue = (arr) => {
   localStorage.setItem(KEY_QUEUE, JSON.stringify(arr));
@@ -555,7 +700,7 @@ const getServerLog = () => JSON.parse(localStorage.getItem(KEY_SERVER_LOG) || "[
 const saveServerLog = (arr) => localStorage.setItem(KEY_SERVER_LOG, JSON.stringify(arr));
 
 function allCatalogPacks() {
-  return [...DEFAULT_KCSE_PACKS, ...getCustomPacks()];
+  return [...DEFAULT_STUDY_PACKS, ...getCustomPacks()];
 }
 
 function showToast(msg) {
@@ -569,26 +714,46 @@ function showToast(msg) {
 function seedInitialPacks() {
   const downloaded = getDownloaded();
   if (Object.keys(downloaded).length === 0) {
-    ["math-kcse", "bio-kcse"].forEach((id) => {
-      const found = DEFAULT_KCSE_PACKS.find((p) => p.pack_id === id);
+    ["math-kcse", "bio-kcse", "cbc-int-sci", "cbc-math"].forEach((id) => {
+      const found = DEFAULT_STUDY_PACKS.find((p) => p.pack_id === id);
       if (found) downloaded[id] = found;
     });
     saveDownloaded(downloaded);
   }
 }
 
+function renderCurriculumTips() {
+  const grid = document.getElementById("curriculum-tips-grid");
+  const visibleTips = CURRICULUM_REVISION_TIPS.filter(
+    (t) => activeCurriculum === "All" || t.curriculum === activeCurriculum
+  );
+
+  grid.innerHTML = visibleTips
+    .map(
+      (t) => `
+      <div class="tip-card ${t.curriculum.toLowerCase()}">
+        <span class="curr-tag ${t.curriculum}" style="margin-bottom:0.35rem;display:inline-block">${t.curriculum} Strategy</span>
+        <strong>${t.title}</strong>
+        <p>${t.body}</p>
+      </div>`
+    )
+    .join("");
+}
+
 function renderCatalog() {
   const grid = document.getElementById("pack-grid");
   const downloaded = getDownloaded();
   const packs = allCatalogPacks().filter((p) => {
+    const matchCurr = activeCurriculum === "All" || p.curriculum === activeCurriculum;
     const matchCat = activeCategory === "All" || p.category === activeCategory;
     const q = searchQuery.toLowerCase();
     const matchSearch =
       !q ||
       p.subject.toLowerCase().includes(q) ||
+      p.curriculum.toLowerCase().includes(q) ||
       p.title.toLowerCase().includes(q) ||
       p.notes.some((n) => n.heading.toLowerCase().includes(q));
-    return matchCat && matchSearch;
+    return matchCurr && matchCat && matchSearch;
   });
 
   grid.innerHTML = "";
@@ -599,11 +764,14 @@ function renderCatalog() {
     card.innerHTML = `
       <div>
         <div class="card-top">
-          <span class="pill">${pack.subject}</span>
+          <div class="badge-row">
+            <span class="curr-tag ${pack.curriculum}">${pack.curriculum}</span>
+            <span class="pill">${pack.subject}</span>
+          </div>
           <span class="size-tag">${pack.size_kb} KB • ${pack.quiz.length} Qs</span>
         </div>
         <h3>${pack.title}</h3>
-        <p class="muted">${pack.notes.length} Notes • ${pack.flashcards.length} Flashcards • ${pack.category}</p>
+        <p class="muted">${pack.notes.length} Notes • ${pack.flashcards.length} Flashcards${pack.pdf_data_url ? " • PDF Attached" : ""}</p>
       </div>
       <div class="card-actions">
         ${
@@ -631,23 +799,25 @@ function downloadPack(packId) {
   if (!pack) return;
   const downloaded = getDownloaded();
   downloaded[packId] = pack;
-  saveDownloaded(downloaded);
-  showToast(`Downloaded "${pack.subject}: ${pack.title}" (${pack.size_kb} KB) for offline use.`);
-  renderCatalog();
+  if (saveDownloaded(downloaded)) {
+    showToast(`Downloaded [${pack.curriculum}] ${pack.subject}: "${pack.title}" (${pack.size_kb} KB).`);
+    renderCatalog();
+  }
 }
 
 document.getElementById("download-all-btn").onclick = () => {
   if (!isOnline) {
-    showToast("Switch to Online mode first to download all 12 KCSE packs.");
+    showToast("Switch to Online mode first to download all KCSE & CBC packs.");
     return;
   }
   const downloaded = getDownloaded();
   allCatalogPacks().forEach((p) => {
     downloaded[p.pack_id] = p;
   });
-  saveDownloaded(downloaded);
-  showToast("All KCSE subject packs cached locally! Try switching to Offline Mode now.");
-  renderCatalog();
+  if (saveDownloaded(downloaded)) {
+    showToast("All KCSE & CBC packs cached locally! Toggle Offline Mode to test.");
+    renderCatalog();
+  }
 };
 
 document.getElementById("reset-demo-btn").onclick = () => {
@@ -659,7 +829,7 @@ document.getElementById("reset-demo-btn").onclick = () => {
   saveQueue([]);
   renderCatalog();
   renderSyncLog();
-  showToast("Storage reset to default state.");
+  showToast("Storage reset to default KCSE + CBC state.");
 };
 
 function openStudyPack(packId) {
@@ -668,18 +838,35 @@ function openStudyPack(packId) {
 
   document.getElementById("catalog-view").classList.add("hidden");
   document.getElementById("study-view").classList.remove("hidden");
-  document.getElementById("study-badge").textContent = `${pack.subject} • ${pack.category}`;
+  document.getElementById("study-badge").textContent = `${pack.curriculum} • ${pack.subject} • ${pack.category}`;
   document.getElementById("study-title").textContent = pack.title;
 
-  document.getElementById("panel-notes").innerHTML = pack.notes
-    .map(
-      (n) => `
-      <div class="note-box">
-        <h3 style="margin:0 0 0.35rem">${n.heading}</h3>
-        <p style="margin:0">${n.body}</p>
+  const tipHtml = pack.revision_tip
+    ? `<div class="tip-callout"><strong>Exam & Competency Revision Tip</strong><p style="margin:0.25rem 0 0">${pack.revision_tip}</p></div>`
+    : "";
+
+  const pdfHtml = pack.pdf_data_url
+    ? `<div class="pdf-box">
+        <div>
+          <strong>Imported PDF Paper: ${pack.pdf_name || "Revision Paper.pdf"}</strong>
+          <p class="muted" style="margin-top:0.2rem">Stored locally in your browser for offline access.</p>
+        </div>
+        <a href="${pack.pdf_data_url}" download="${pack.pdf_name || "revision-paper.pdf"}" class="btn-primary" style="text-decoration:none;display:inline-block">Open / Download PDF</a>
       </div>`
-    )
-    .join("");
+    : "";
+
+  document.getElementById("panel-notes").innerHTML =
+    tipHtml +
+    pdfHtml +
+    pack.notes
+      .map(
+        (n) => `
+        <div class="note-box">
+          <h3 style="margin:0 0 0.35rem">${n.heading}</h3>
+          <p style="margin:0;white-space:pre-line">${n.body}</p>
+        </div>`
+      )
+      .join("");
 
   document.getElementById("panel-flashcards").innerHTML = pack.flashcards
     .map(
@@ -737,6 +924,7 @@ function submitQuiz(packId) {
 
   const attempt = {
     pack_id: pack.pack_id,
+    curriculum: pack.curriculum,
     subject: pack.subject,
     title: pack.title,
     score,
@@ -803,6 +991,7 @@ function renderSyncLog() {
       (item) => `
       <div class="log-item">
         <div>
+          <span class="curr-tag ${item.curriculum || "KCSE"}">${item.curriculum || "KCSE"}</span>
           <strong>${item.subject}</strong> — ${item.title}
           <span class="muted">(${item.timestamp})</span>
         </div>
@@ -816,6 +1005,204 @@ function renderSyncLog() {
     )
     .join("");
 }
+
+function saveImportedPack(newPack) {
+  const custom = getCustomPacks();
+  custom.push(newPack);
+  if (!saveCustomPacks(custom)) return;
+
+  const downloaded = getDownloaded();
+  downloaded[newPack.pack_id] = newPack;
+  if (!saveDownloaded(downloaded)) return;
+
+  renderCatalog();
+  showToast(`Imported & cached "${newPack.title}" for offline study!`);
+}
+
+document.getElementById("download-sample-json-btn").onclick = () => {
+  const samplePaper = {
+    curriculum: "KCSE",
+    subject: "Chemistry",
+    category: "Sciences",
+    title: "Imported Sample: Mole & Titration Revision Paper",
+    revision_tip: "Write balanced ionic equations and average concordant titres to 2 decimal places.",
+    notes: [
+      {
+        heading: "Volumetric Analysis Summary",
+        body: "Use M1V1 / n1 = M2V2 / n2 for stoichiometry calculations once average titre is calculated."
+      }
+    ],
+    flashcards: [
+      {
+        term: "Concordant Titres",
+        definition: "Titre readings that agree within 0.1 cm³ or 0.2 cm³ of each other."
+      }
+    ],
+    quiz: [
+      {
+        question: "25.0 cm³ of 0.1M NaOH neutralized 25.0 cm³ of HCl. What is the molarity of HCl?",
+        options: ["0.05 M", "0.10 M", "0.20 M", "0.25 M"],
+        answer_index: 1,
+        explanation: "Since NaOH and HCl react in a 1:1 mole ratio with equal volumes, molarity is 0.10 M."
+      }
+    ]
+  };
+
+  const blob = new Blob([JSON.stringify(samplePaper, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "kcse-sample-revision-paper.json";
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast("Downloaded sample revision paper (.json) — try importing it above!");
+};
+
+document.getElementById("import-paper-form").onsubmit = (e) => {
+  e.preventDefault();
+  const fileInput = document.getElementById("imp-file");
+  const file = fileInput.files[0];
+  if (!file) return;
+
+  const curriculum = document.getElementById("imp-curriculum").value;
+  const subject = document.getElementById("imp-subject").value.trim();
+  const category = document.getElementById("imp-category").value;
+  const title = document.getElementById("imp-title").value.trim();
+  const customTip = document.getElementById("imp-tip").value.trim();
+  const packId = `imported-${Date.now().toString().slice(-6)}`;
+  const sizeKb = Math.max(1, Math.round(file.size / 1024));
+
+  const isJson = file.name.toLowerCase().endsWith(".json") || file.type === "application/json";
+  const isPdf = file.name.toLowerCase().endsWith(".pdf") || file.type === "application/pdf";
+
+  const reader = new FileReader();
+
+  if (isJson) {
+    reader.onload = () => {
+      try {
+        const parsed = JSON.parse(reader.result);
+        const importedPack = {
+          pack_id: parsed.pack_id || packId,
+          curriculum: parsed.curriculum || curriculum,
+          subject: parsed.subject || subject,
+          category: parsed.category || category,
+          title: parsed.title || title,
+          revision_tip:
+            customTip ||
+            parsed.revision_tip ||
+            "Review each question carefully and verify units/terminology against the marking scheme.",
+          size_kb: sizeKb,
+          notes:
+            Array.isArray(parsed.notes) && parsed.notes.length
+              ? parsed.notes
+              : [{ heading: file.name, body: "Imported structured revision paper." }],
+          flashcards:
+            Array.isArray(parsed.flashcards) && parsed.flashcards.length
+              ? parsed.flashcards
+              : [{ term: "Imported Paper", definition: title }],
+          quiz:
+            Array.isArray(parsed.quiz) && parsed.quiz.length
+              ? parsed.quiz
+              : [
+                  {
+                    question: `Have you reviewed all sections of "${parsed.title || title}"?`,
+                    options: ["Yes, completed review", "Still revising key concepts", "Need teacher clarification", "Skipped"],
+                    answer_index: 0,
+                    explanation: "Self-check logged for your revision progress."
+                  }
+                ]
+        };
+        saveImportedPack(importedPack);
+        e.target.reset();
+      } catch (_) {
+        showToast("Invalid JSON file. Check formatting or download the sample .json template.");
+      }
+    };
+    reader.readAsText(file);
+  } else if (isPdf) {
+    if (file.size > 1.5 * 1024 * 1024) {
+      showToast("PDF larger than 1.5 MB may exceed local browser storage. Use a smaller PDF or .TXT/.JSON.");
+      return;
+    }
+    reader.onload = () => {
+      const pdfPack = {
+        pack_id: packId,
+        curriculum,
+        subject,
+        category,
+        title,
+        revision_tip:
+          customTip ||
+          "Attempt the imported PDF paper under timed conditions first before checking your marking notes.",
+        size_kb: sizeKb,
+        pdf_name: file.name,
+        pdf_data_url: reader.result,
+        notes: [
+          {
+            heading: `Attached Paper: ${file.name}`,
+            body: "Use the 'Open / Download PDF' button above to view or save this imported revision paper offline."
+          }
+        ],
+        flashcards: [
+          {
+            term: `${subject} Exam Focus`,
+            definition: `Key revision paper: ${title} (${file.name}).`
+          }
+        ],
+        quiz: [
+          {
+            question: `Did you attempt "${title}" within the allocated exam time?`,
+            options: ["Yes, within time", "Needed extra time", "Partially attempted", "Not yet attempted"],
+            answer_index: 0,
+            explanation: "Timed practice builds speed and accuracy for national exams and assessments."
+          }
+        ]
+      };
+      saveImportedPack(pdfPack);
+      e.target.reset();
+    };
+    reader.readAsDataURL(file);
+  } else {
+    reader.onload = () => {
+      const textContent = String(reader.result || "").trim();
+      const snippet = textContent.slice(0, 2500) || "Empty text file.";
+      const txtPack = {
+        pack_id: packId,
+        curriculum,
+        subject,
+        category,
+        title,
+        revision_tip:
+          customTip ||
+          "Read through the imported revision text and highlight key definitions, formulas, and examples.",
+        size_kb: sizeKb,
+        notes: [
+          {
+            heading: `Imported Paper (${file.name})`,
+            body: snippet
+          }
+        ],
+        flashcards: [
+          {
+            term: title,
+            definition: `Imported from ${file.name} (${sizeKb} KB) for offline study.`
+          }
+        ],
+        quiz: [
+          {
+            question: `Have you summarized the main points from "${title}"?`,
+            options: ["Yes, summarized key points", "Reviewed once", "Need more practice", "Not started"],
+            answer_index: 0,
+            explanation: "Summarizing revision papers in your own words strengthens long-term recall."
+          }
+        ]
+      };
+      saveImportedPack(txtPack);
+      e.target.reset();
+    };
+    reader.readAsText(file);
+  }
+};
 
 document.getElementById("toggle-network-btn").onclick = () => {
   isOnline = !isOnline;
@@ -831,7 +1218,7 @@ document.getElementById("toggle-network-btn").onclick = () => {
     showToast("Back Online! Checking sync queue...");
     flushSyncQueue();
   } else {
-    showToast("Offline Mode enabled — cached packs and quizzes still work!");
+    showToast("Offline Mode enabled — cached KCSE & CBC packs still work!");
   }
 };
 
@@ -857,6 +1244,16 @@ document.querySelectorAll(".stab").forEach((btn) => {
   btn.onclick = () => activateStudyTab(btn.dataset.tab);
 });
 
+document.querySelectorAll(".curr-btn").forEach((btn) => {
+  btn.onclick = () => {
+    document.querySelectorAll(".curr-btn").forEach((b) => b.classList.remove("active"));
+    btn.classList.add("active");
+    activeCurriculum = btn.dataset.curr;
+    renderCurriculumTips();
+    renderCatalog();
+  };
+});
+
 document.querySelectorAll(".cat-btn").forEach((btn) => {
   btn.onclick = () => {
     document.querySelectorAll(".cat-btn").forEach((b) => b.classList.remove("active"));
@@ -873,9 +1270,11 @@ document.getElementById("search-input").oninput = (e) => {
 
 document.getElementById("creator-form").onsubmit = (e) => {
   e.preventDefault();
+  const curriculum = document.getElementById("c-curriculum").value;
   const subject = document.getElementById("c-subject").value;
   const category = document.getElementById("c-category").value;
   const title = document.getElementById("c-title").value.trim();
+  const revision_tip = document.getElementById("c-tip").value.trim();
   const options = document
     .getElementById("c-opts")
     .value.split(",")
@@ -890,10 +1289,12 @@ document.getElementById("creator-form").onsubmit = (e) => {
   const ansIdx = Math.min(Math.max(0, Number(document.getElementById("c-ans").value) || 0), options.length - 1);
   const newPack = {
     pack_id: `custom-${Date.now().toString().slice(-5)}`,
+    curriculum,
     subject,
     category,
     title,
-    size_kb: 12,
+    revision_tip,
+    size_kb: 13,
     notes: [
       {
         heading: document.getElementById("c-note-head").value.trim(),
@@ -916,20 +1317,12 @@ document.getElementById("creator-form").onsubmit = (e) => {
     ]
   };
 
-  const custom = getCustomPacks();
-  custom.push(newPack);
-  saveCustomPacks(custom);
-
-  const downloaded = getDownloaded();
-  downloaded[newPack.pack_id] = newPack;
-  saveDownloaded(downloaded);
-
+  saveImportedPack(newPack);
   e.target.reset();
-  renderCatalog();
-  showToast(`Created & cached "${subject}: ${title}" for offline revision!`);
 };
 
 seedInitialPacks();
 saveQueue(getQueue());
+renderCurriculumTips();
 renderCatalog();
 renderSyncLog();
