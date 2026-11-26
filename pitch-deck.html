@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>StudyPack Kenya — Pitch Deck</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card: #1e293b;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --teal: #14b8a6;
+      --violet: #a78bfa;
+    }
+    * { box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    header {
+      padding: 1rem 2rem;
+      border-bottom: 1px solid #334155;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+    main {
+      max-width: 900px;
+      width: 100%;
+      margin: auto;
+      padding: 2rem;
+    }
+    .slide {
+      display: none;
+      background: var(--card);
+      border: 1px solid #334155;
+      border-radius: 16px;
+      padding: 2.5rem;
+    }
+    .slide.active { display: block; }
+    .tag {
+      display: inline-block;
+      background: rgba(20, 184, 166, 0.15);
+      color: var(--teal);
+      padding: 0.25rem 0.7rem;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+    }
+    h1, h2 { margin: 0 0 1rem; line-height: 1.2; }
+    h1 { font-size: 2.2rem; }
+    h2 { font-size: 1.7rem; }
+    p, li { color: #e2e8f0; font-size: 1.05rem; line-height: 1.6; }
+    ul { padding-left: 1.25rem; }
+    footer {
+      padding: 1rem 2rem;
+      border-top: 1px solid #334155;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .btns { display: flex; gap: 0.75rem; }
+    button {
+      background: var(--teal);
+      color: #042f2e;
+      border: none;
+      border-radius: 8px;
+      padding: 0.6rem 1.2rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    button.secondary {
+      background: #334155;
+      color: var(--text);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <span>StudyPack Kenya — KCSE & CBC Offline Revision</span>
+    <span id="counter">Slide 1 / 6</span>
+  </header>
+
+  <main>
+    <section class="slide active">
+      <span class="tag">Slide 1 • Overview</span>
+      <h1>StudyPack Kenya</h1>
+      <p>Offline-first revision platform supporting <strong>KCSE (8-4-4)</strong> and <strong>CBC (Junior & Senior School)</strong> learners in low-connectivity and high-data-cost environments.</p>
+      <p><strong>Repo:</strong> https://github.com/Pach3384/studypack-offline-revision.git</p>
+    </section>
+
+    <section class="slide">
+      <span class="tag">Slide 2 • The Problem</span>
+      <h2>Connectivity & Data Cost Barriers</h2>
+      <ul>
+        <li>Intermittent internet and mobile data costs interrupt revision when students need it most.</li>
+        <li>Heavy web portals fail or time out on low-bandwidth connections.</li>
+        <li>Learners need structured notes, exam/competency tips, flashcards, and practice tests without constant network access.</li>
+      </ul>
+    </section>
+
+    <section class="slide">
+      <span class="tag">Slide 3 • The Solution</span>
+      <h2>Lightweight Offline Study Packs</h2>
+      <ul>
+        <li>Download compact packs (~13–18 KB) covering 12 core KCSE subjects plus CBC strands and revision tips.</li>
+        <li>Study notes, flip flashcards, and take auto-graded quizzes with zero connection.</li>
+        <li>Import past/revision papers (<code>.json</code>, <code>.txt</code>, <code>.pdf</code>) or create custom packs directly in the browser.</li>
+      </ul>
+    </section>
+
+    <section class="slide">
+      <span class="tag">Slide 4 • Architecture</span>
+      <h2>Offline PWA + Sync Queue + FastAPI</h2>
+      <ul>
+        <li><strong>Frontend PWA:</strong> <code>index.html</code>, <code>styles.css</code>, <code>app.js</code>, and Service Worker (<code>sw.js</code>) for shell caching.</li>
+        <li><strong>Local Persistence:</strong> <code>localStorage</code> caches packs and queues quiz attempts while offline.</li>
+        <li><strong>Backend API:</strong> FastAPI (<code>backend/main.py</code>) handles <code>/api/packs</code>, <code>/api/sync</code>, and <code>/api/progress</code> when back online.</li>
+      </ul>
+    </section>
+
+    <section class="slide">
+      <span class="tag">Slide 5 • Live Demo Flow</span>
+      <h2>How to Demo in 90 Seconds</h2>
+      <ul>
+        <li>Switch between <strong>All Curricula</strong>, <strong>KCSE</strong>, and <strong>CBC</strong> and download a pack.</li>
+        <li>Toggle <strong>Go Offline</strong>, read revision tips and notes, flip flashcards, and submit a quiz.</li>
+        <li>Watch the attempt queue locally, then toggle <strong>Go Online</strong> (or click <strong>Sync Queue</strong>) to sync.</li>
+      </ul>
+    </section>
+
+    <section class="slide">
+      <span class="tag">Slide 6 • Impact & Next Steps</span>
+      <h2>Built for Inclusive Revision</h2>
+      <ul>
+        <li>Helps learners revise during outages or low-data periods without losing progress.</li>
+        <li>Gives teachers and peers a simple way to share structured revision bundles and papers.</li>
+        <li>Next steps: expand CBC Senior School strands, larger paper storage via IndexedDB, and persistent database storage.</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer>
+    <span style="color:var(--muted);font-size:0.85rem">Use Previous / Next to step through slides</span>
+    <div class="btns">
+      <button class="secondary" id="prev-btn">Previous</button>
+      <button id="next-btn">Next</button>
+    </div>
+  </footer>
+
+  <script>
+    const slides = [...document.querySelectorAll(".slide")];
+    let idx = 0;
+    function show(n) {
+      idx = (n + slides.length) % slides.length;
+      slides.forEach((s, i) => s.classList.toggle("active", i === idx));
+      document.getElementById("counter").textContent = `Slide ${idx + 1} / ${slides.length}`;
+    }
+    document.getElementById("prev-btn").onclick = () => show(idx - 1);
+    document.getElementById("next-btn").onclick = () => show(idx + 1);
+  </script>
+</body>
+</html>
